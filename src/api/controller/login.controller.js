@@ -1,37 +1,33 @@
 const loginService = require('../service/login.service.js');
 
-userLogin = (req, res, next) => {
-    console.log(`userLogin ${req.method} ${req.url}`);
+userLogin = async (req, res, next) => {
     let response;
-    try {
-        const result = loginService.userLogin();
 
-        if (result) {
-            response = {
-                success: true,
-                message: 'User successfully loggedin!'
-            }
-        } else {
-            response = {
-                success: false,
-                message: 'User not found. Try signing up.'
-            }
+    try {
+        const phoneNumber = req.body.phoneNumber;
+        const otp = req.body.otp;
+
+        const result = await loginService.userLogin(phoneNumber, otp);
+
+        response = {
+            success: true,
+            message: 'User successfully loggedin!',
+            token: result.jwtToken
         }
 
         res.status(200).send(response);
     } catch (error) {
         response = {
             success: false,
-            message: 'Something went wrong!'
+            error: error.message
         }
 
-        res.status(500).send(response);
+        res.status(400).send(response);
     }
     next();
 };
 
-createUser = (req, res, next) => {
-    console.log(`createUser ${req.method} ${req.url}`);
+createUser = async (req, res, next) => {
     let response;
 
     try {
@@ -39,34 +35,49 @@ createUser = (req, res, next) => {
         const phoneNumber = req.body.phoneNumber;
         const otp = req.body.otp;
 
-        const result = loginService.createUser(username, phoneNumber);
+        const result = await loginService.createUser(username, phoneNumber, otp);
 
-        if (result) {
-            response = {
-                success: true,
-                message: 'User successfully created!'
-            }
-        } else {
-            response = {
-                success: false,
-                message: 'Error while creating user.'
-            }
+        response = {
+            success: true,
+            message: 'User successfully created!',
+            token: result.jwtToken
         }
 
         res.status(200).send(response);
     } catch (error) {
         response = {
             success: false,
-            message: 'Something went wrong!'
+            error: error.message
         }
 
-        res.status(500).send(response);
+        res.status(400).send(response);
     }
     next();
 };
 
-sendOtp = (req, res, next) => {
-    console.log(`sendOtp ${req.method} ${req.url}`);
+sendOtp = async (req, res, next) => {
+    let response;
+
+    try {
+        const phoneNumber = req.body.phoneNumber;
+        const requestType = req.body.requestType;
+
+        const result = await loginService.sendOtp(phoneNumber, requestType);
+
+        response = {
+            success: true,
+            message: 'OTP sent!'
+        }
+
+        res.status(200).send(response);
+    } catch (error) {
+        response = {
+            success: false,
+            error: error.message
+        }
+
+        res.status(400).send(response);
+    }
     next();
 };
 
