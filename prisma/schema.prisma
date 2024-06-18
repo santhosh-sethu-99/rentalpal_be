@@ -8,8 +8,16 @@ datasource db {
 }
 
 model Users {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   username    String
-  phoneNumber String   @unique
+  phoneNumber String    @unique
   lastLogin   DateTime?
+}
+
+model Otp {
+  id          Int     @id @default(autoincrement())
+  phoneNumber String
+  otp         String
+  isActive    Boolean
+  generatedAt DateTime
 }
